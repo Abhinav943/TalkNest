@@ -18,7 +18,9 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.10.1",
-    "moongoose": "^0.0.5"
+    "moongoose": "^0.0.1",
+    "prettier": "^3.8.3",
+    "resend": "^6.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
