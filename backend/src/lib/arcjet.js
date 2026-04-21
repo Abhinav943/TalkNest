@@ -1,7 +1,7 @@
 import arcjet, { shield, detectBot, slidingWindow } from "@arcjet/node";
 import { ENV } from "./env.js";
 
-export const aj = arcjet({
+const aj = arcjet({
   key: ENV.ARCJET_KEY,
   rules: [
     shield({ mode: "LIVE" }),
@@ -23,3 +23,5 @@ export const aj = arcjet({
     }),
   ],
 });
+
+export default aj;
