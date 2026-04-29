@@ -1,6 +1,7 @@
 import Message from "../models/Message.js";
 import User from "../models/User.js";
 import cloudinary from "../lib/cloudinary.js";
+import {io, getReceiverSocketId} from "../lib/socket.js";
 
 export const getAllcontacts = async (req, res) => {
   try {
@@ -71,7 +72,12 @@ export const sendMessage = async (req, res) => {
     });
 
     const savedMessage = await newMessage.save();
-    // TODO: Implement real-time messaging using WebSocket
+
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("newMessage", savedMessage);
+    }
+
     res.status(201).json(savedMessage);
   } catch (error) {
     console.error("Error sending message:", error);

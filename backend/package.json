@@ -24,7 +24,8 @@
     "mongoose": "^8.10.1",
     "moongoose": "^0.0.1",
     "prettier": "^3.8.3",
-    "resend": "^6.0.2"
+    "resend": "^6.0.2",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
