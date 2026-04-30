@@ -88,7 +88,8 @@ export const useAuthStore = create((set, get) => ({
   },
 
   connectSocket: () => {
-    const authUser = get();
+    const { authUser } = get();
+
     if (!authUser || get().socket?.connected) return;
 
     const socket = io(BASE_URL, {
@@ -99,6 +100,7 @@ export const useAuthStore = create((set, get) => ({
     socket.on("connect_error", (err) => {
       console.error("Socket connection error:", err);
     });
+
     set({ socket });
 
     socket.on("getOnlineUsers", (userIds) => {

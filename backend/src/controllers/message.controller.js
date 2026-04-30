@@ -1,7 +1,7 @@
 import Message from "../models/Message.js";
 import User from "../models/User.js";
 import cloudinary from "../lib/cloudinary.js";
-import {io, getReceiverSocketId} from "../lib/socket.js";
+import { io, getReceiverSocketId } from "../lib/socket.js";
 
 export const getAllcontacts = async (req, res) => {
   try {
@@ -96,7 +96,7 @@ export const getChatPartners = async (req, res) => {
     const chatPartnerIds = [
       ...new Set(
         messages.map((msg) =>
-          msg.senderId.toString() === loggedInUserId
+          msg.senderId.toString() === loggedInUserId.toString()
             ? msg.receiverId
             : msg.senderId,
         ),

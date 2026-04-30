@@ -4,6 +4,7 @@ import {
   login,
   logout,
   updateProfile,
+  checkAuth,
 } from "../controllers/auth.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { arcjetProtection } from "../middlewares/arcjet.middleware.js";
@@ -18,10 +19,6 @@ router.post("/logout", logout);
 
 router.put("/update-profile", protectRoute, updateProfile);
 
-router.get("/protected", protectRoute, (req, res) => {
-  res
-    .status(200)
-    .json({ message: "You have accessed a protected route!", user: req.user });
-});
+router.get("/protected", protectRoute, checkAuth);
 
 export default router;
