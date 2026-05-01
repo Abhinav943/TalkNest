@@ -14,6 +14,7 @@ function ChatContainer() {
     isMessagesLoading,
     subscribeToMessages,
     unsubscribeFromMessages,
+    isTyping,
   } = useChatStore();
   const { authUser } = useAuthStore();
   const messageEndRef = useRef(null);
@@ -71,6 +72,17 @@ function ChatContainer() {
                 </div>
               );
             })}
+            {isTyping && (
+              <div className="chat chat-start">
+                <div className="chat-bubble bg-slate-800 text-slate-200 opacity-75">
+                  <span className="flex items-center gap-1">
+                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></span>
+                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></span>
+                    <span className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></span>
+                  </span>
+                </div>
+              </div>
+            )}
             <div ref={messageEndRef} />
           </div>
         ) : isMessagesLoading ? (

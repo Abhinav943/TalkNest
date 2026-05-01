@@ -11,6 +11,8 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUsersLoading: false,
   isMessagesLoading: false,
+  isTyping: false,
+  typingTimeout: null,
   isSoundEnabled: JSON.parse(localStorage.getItem("isSoundEnabled")) === true,
 
   toggleSound: () => {
@@ -93,6 +95,15 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  sendTypingEvent: () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
+    const socket = useAuthStore.getState().socket;
+    if (socket) {
+      socket.emit("typing", { receiverId: selectedUser._id });
+    }
+  },
+
   subscribeToMessages: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;
@@ -100,6 +111,23 @@ export const useChatStore = create((set, get) => ({
     const socket = useAuthStore.getState().socket;
 
     socket.off("newMessage");
+    socket.off("typing");
+
+    socket.on("typing", ({ senderId }) => {
+      const currentSelectedUser = get().selectedUser;
+      if (currentSelectedUser && senderId === currentSelectedUser._id) {
+        set({ isTyping: true });
+        
+        const { typingTimeout } = get();
+        if (typingTimeout) clearTimeout(typingTimeout);
+        
+        const timeout = setTimeout(() => {
+          set({ isTyping: false });
+        }, 2000);
+        
+        set({ typingTimeout: timeout });
+      }
+    });
 
     socket.on("newMessage", (newMessage) => {
       const currentSelectedUser = get().selectedUser;
@@ -126,6 +154,9 @@ export const useChatStore = create((set, get) => ({
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
-    socket.off("newMessage");
+    if (socket) {
+      socket.off("newMessage");
+      socket.off("typing");
+    }
   },
 }));

@@ -11,7 +11,23 @@ function MessageInput() {
 
   const fileInputRef = useRef(null);
 
-  const { sendMessage, isSoundEnabled } = useChatStore();
+  const { sendMessage, isSoundEnabled, sendTypingEvent } = useChatStore();
+  const typingTimeoutRef = useRef(null);
+
+  const handleInputChange = (e) => {
+    setText(e.target.value);
+    isSoundEnabled && playRandomKeyStrokeSound();
+
+    if (!typingTimeoutRef.current) {
+      sendTypingEvent();
+    }
+    
+    if (typingTimeoutRef.current) clearTimeout(typingTimeoutRef.current);
+    
+    typingTimeoutRef.current = setTimeout(() => {
+      typingTimeoutRef.current = null;
+    }, 1000);
+  };
 
   const handleSendMessage = (e) => {
     e.preventDefault();
@@ -69,10 +85,7 @@ function MessageInput() {
         <input
           type="text"
           value={text}
-          onChange={(e) => {
-            setText(e.target.value);
-            isSoundEnabled && playRandomKeyStrokeSound();
-          }}
+          onChange={handleInputChange}
           className="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-lg py-2 px-4"
           placeholder="Type your message..."
         />
