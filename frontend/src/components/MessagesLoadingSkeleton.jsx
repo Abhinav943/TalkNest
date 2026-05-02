@@ -4,9 +4,12 @@ function MessagesLoadingSkeleton() {
       {[...Array(6)].map((_, index) => (
         <div
           key={index}
-          className={`chat ${index % 2 === 0 ? "chat-start" : "chat-end"} animate-pulse`}
+          className={`chat ${index % 2 === 0 ? "chat-start" : "chat-end"}`}
         >
-          <div className={`chat-bubble bg-slate-800 text-white w-32`}></div>
+          <div className={`chat-bubble bg-white/6 border border-white/10 w-40`}>
+            <div className="h-4 rounded bg-white/8 shimmer w-28"></div>
+            <div className="h-3 rounded bg-white/6 shimmer w-16 mt-2"></div>
+          </div>
         </div>
       ))}
     </div>

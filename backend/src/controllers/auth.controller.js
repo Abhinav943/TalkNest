@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
-import { generateToken } from "../lib/utils.js";
+import { generateToken, getJwtCookieOptions } from "../lib/utils.js";
 import { ENV } from "../lib/env.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
 import cloudinary from "../lib/cloudinary.js";
@@ -98,7 +98,13 @@ export const login = async (req, res) => {
 };
 
 export const logout = (_, res) => {
-  res.cookie("jwt", "", { maxAge: 0 });
+  // Clear cookie with the same options used when setting it,
+  // otherwise some browsers won't remove it (path/secure/samesite mismatch).
+  res.clearCookie("jwt", getJwtCookieOptions());
+  res.cookie("jwt", "", {
+    ...getJwtCookieOptions(),
+    maxAge: 0,
+  });
   res.status(200).json({ message: "Logged out successfully" });
 };
 

@@ -18,9 +18,22 @@
 - 🔐 **Secure Authentication**: JWT-based auth with encrypted cookies and socket handshake validation.
 - ⌨️ **Live Typing Indicators**: See when your friends are typing in real-time.
 - 🖼️ **Image Sharing**: Seamlessly share images using Cloudinary integration.
-- 📱 **Responsive Design**: Beautiful UI built with TailwindCSS and DaisyUI, working flawlessly across all devices.
+- 🎨 **Theme Switcher (3 Looks)**: Switch between **Cute/Clean**, **Vibrant/Flashy**, and **WhatsApp-like Clean** from the in-app palette menu (persists locally).
+- 🔎 **Sidebar Search**: Quickly filter chats/contacts with instant local search.
+- ✨ **Polished UI & Animations**: Glassmorphism layout, micro-interactions, shimmer skeletons, and a premium animated loader (respects reduced-motion).
+- 📱 **Responsive Design**: UI built with TailwindCSS + DaisyUI themes, working across devices.
 - 🛡️ **Advanced Security**: Integrated with @arcjet/node for bot and attack protection.
 - 🔔 **In-App Notifications**: Toast notifications and sound alerts for a smooth user experience.
+
+## 🖌️ Frontend Theming
+
+The frontend uses **DaisyUI themes** on top of Tailwind. Current themes:
+
+- `cuteClean` (Cute / Clean)
+- `vibrantFlashy` (Vibrant / Flashy)
+- `whatsappClean` (WhatsApp / Clean)
+
+The active theme is applied via the `data-theme` attribute and is saved to `localStorage`.
 
 ## 🔑 Environment Variables
 

@@ -14,18 +14,20 @@ function LoginPage() {
   };
 
   return (
-      <div className="w-full flex items-center justify-center p-4 bg-slate-900">
-        <div className="relative w-full max-w-4xl md:h-[650px] h-[500px]">
+      <div className="w-full flex items-center justify-center">
+        <div className="relative w-full max-w-5xl md:h-[680px] h-[520px] motion-safe:animate-fade-up">
           <BorderAnimatedContainer>
             <div className="w-full flex flex-col md:flex-row">
 
-              <div className="md:w-1/2 p-8 flex items-center justify-center md:border-r border-slate-600/30">
+              <div className="md:w-1/2 p-8 md:p-10 flex items-center justify-center md:border-r border-white/10">
                 <div className="w-full max-w-md">
                   {/* HEADING TEXT */}
                   <div className="text-center mb-8">
-                    <MessageCircleIcon className="w-12 h-12 mx-auto text-slate-400 mb-4" />
-                    <h2 className="text-2xl font-bold text-slate-200 mb-2">Welcome Back</h2>
-                    <p className="text-slate-400">Login to access to your account</p>
+                    <div className="mx-auto mb-4 w-12 h-12 rounded-2xl bg-white/5 border border-white/10 grid place-items-center">
+                      <MessageCircleIcon className="w-6 h-6 text-primary" />
+                    </div>
+                    <h2 className="text-3xl font-bold text-slate-100 mb-2 tracking-tight">Welcome back</h2>
+                    <p className="text-slate-300/80">Sign in to continue your conversations.</p>
                   </div>
 
 
@@ -64,7 +66,7 @@ function LoginPage() {
 
                     <button className="auth-btn" type="submit" disabled={isLoggingIn}>
                       {isLoggingIn ? (
-                          <LoaderIcon className="w-full h-5 animate-spin text-center" />
+                          <LoaderIcon className="w-full h-5 animate-spin text-center text-slate-950" />
                       ) : (
                           "Sign In"
                       )}
@@ -79,20 +81,20 @@ function LoginPage() {
                 </div>
               </div>
 
-              <div className="hidden md:w-1/2 md:flex items-center justify-center p-6 bg-gradient-to-bl from-slate-800/20 to-transparent">
-                <div>
+              <div className="hidden md:w-1/2 md:flex items-center justify-center p-10">
+                <div className="w-full">
                   <img
                       src="/login.png"
                       alt="People using mobile devices"
-                      className="w-full h-auto object-contain"
+                      className="w-full h-auto object-contain drop-shadow-[0_30px_60px_rgba(0,0,0,0.35)] motion-safe:animate-float-slow"
                   />
                   <div className="mt-6 text-center">
-                    <h3 className="text-xl font-medium text-cyan-400">Connect anytime, anywhere</h3>
+                    <h3 className="text-xl font-semibold text-slate-100">Connect anytime, anywhere</h3>
 
                     <div className="mt-4 flex justify-center gap-4">
-                      <span className="auth-badge">Free</span>
-                      <span className="auth-badge">Easy Setup</span>
-                      <span className="auth-badge">Private</span>
+                      <span className="auth-badge hover-lift tap">Free</span>
+                      <span className="auth-badge hover-lift tap">Easy Setup</span>
+                      <span className="auth-badge hover-lift tap">Private</span>
                     </div>
                   </div>
                 </div>

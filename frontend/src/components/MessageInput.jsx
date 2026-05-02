@@ -61,18 +61,18 @@ function MessageInput() {
   };
 
   return (
-    <div className="p-4 border-t border-slate-700/50">
+    <div className="p-4 border-t border-white/10">
       {imagePreview && (
         <div className="max-w-3xl mx-auto mb-3 flex items-center">
           <div className="relative">
             <img
               src={imagePreview}
               alt="Preview"
-              className="w-20 h-20 object-cover rounded-lg border border-slate-700"
+              className="w-20 h-20 object-cover rounded-2xl border border-white/10"
             />
             <button
               onClick={removeImage}
-              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center text-slate-200 hover:bg-slate-700"
+              className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-base-200/90 border border-white/10 flex items-center justify-center text-slate-100 hover:bg-base-300"
               type="button"
             >
               <XIcon className="w-4 h-4" />
@@ -86,7 +86,7 @@ function MessageInput() {
           type="text"
           value={text}
           onChange={handleInputChange}
-          className="flex-1 bg-slate-800/50 border border-slate-700/50 rounded-lg py-2 px-4"
+          className="flex-1 glass-panel rounded-2xl py-2.5 px-4 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/70"
           placeholder="Type your message..."
         />
 
@@ -101,8 +101,8 @@ function MessageInput() {
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className={`bg-slate-800/50 text-slate-400 hover:text-slate-200 rounded-lg px-4 transition-colors ${
-            imagePreview ? "text-cyan-500" : ""
+          className={`btn btn-ghost rounded-2xl px-4 hover:bg-white/10 ${
+            imagePreview ? "text-primary" : "text-slate-300/70"
           }`}
         >
           <ImageIcon className="w-5 h-5" />
@@ -110,7 +110,7 @@ function MessageInput() {
         <button
           type="submit"
           disabled={!text.trim() && !imagePreview}
-          className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-lg px-4 py-2 font-medium hover:from-cyan-600 hover:to-cyan-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="btn rounded-2xl px-4 bg-gradient-to-r from-primary to-secondary text-slate-950 font-semibold hover:brightness-110 active:brightness-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed border-0"
         >
           <SendIcon className="w-5 h-5" />
         </button>
