@@ -18,6 +18,19 @@ const messageSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+    reactions: [
+      {
+        emoji: String,
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+        },
+      },
+    ],
+    replyTo: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message",
+    },
   },
   { timestamps: true },
 );

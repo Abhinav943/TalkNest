@@ -4,6 +4,7 @@ import {
   getChatPartners,
   getMessagesByUserId,
   sendMessage,
+  reactToMessage,
 } from "../controllers/message.controller.js";
 import { protectRoute } from "../middlewares/auth.middleware.js";
 import { arcjetProtection } from "../middlewares/arcjet.middleware.js";
@@ -15,5 +16,6 @@ router.get("/contacts",getAllcontacts);
 router.get("/chats",getChatPartners);
 router.get("/:id",getMessagesByUserId);
 router.post("/send/:id", sendMessage);
+router.post("/react/:messageId", reactToMessage);
 
 export default router;

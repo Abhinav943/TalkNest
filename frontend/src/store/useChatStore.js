@@ -13,6 +13,7 @@ export const useChatStore = create((set, get) => ({
   isMessagesLoading: false,
   isTyping: false,
   typingTimeout: null,
+  replyingTo: null,
   isSoundEnabled: JSON.parse(localStorage.getItem("isSoundEnabled")) === true,
 
   toggleSound: () => {
@@ -22,6 +23,7 @@ export const useChatStore = create((set, get) => ({
 
   setActiveTab: (tab) => set({ activeTab: tab }),
   setSelectedUser: (selectedUser) => set({ selectedUser }),
+  setReplyingTo: (message) => set({ replyingTo: message }),
 
   getAllContacts: async () => {
     set({ isUsersLoading: true });
@@ -70,16 +72,23 @@ export const useChatStore = create((set, get) => ({
       receiverId: selectedUser._id,
       text: messageData.text,
       image: messageData.image,
+      replyTo: get().replyingTo,
       createdAt: new Date().toISOString(),
       isOptimistic: true,
     };
 
-    set((state) => ({ messages: [...state.messages, optimisticMessage] }));
+    set((state) => ({ 
+      messages: [...state.messages, optimisticMessage],
+      replyingTo: null 
+    }));
 
     try {
       const res = await axiosInstance.post(
         `/messages/send/${selectedUser._id}`,
-        messageData,
+        {
+          ...messageData,
+          replyTo: optimisticMessage.replyTo?._id,
+        },
       );
 
       set((state) => ({
@@ -92,6 +101,38 @@ export const useChatStore = create((set, get) => ({
         messages: state.messages.filter((msg) => msg._id !== tempId),
       }));
       toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  },
+
+  reactToMessage: async (messageId, emoji) => {
+    const { messages } = get();
+    const { authUser } = useAuthStore.getState();
+
+    // Optimistic update
+    const updatedMessages = messages.map((msg) => {
+      if (msg._id === messageId) {
+        const reactions = [...(msg.reactions || [])];
+        const existingIndex = reactions.findIndex(
+          (r) => r.emoji === emoji && String(r.userId) === String(authUser._id),
+        );
+
+        if (existingIndex > -1) {
+          reactions.splice(existingIndex, 1);
+        } else {
+          reactions.push({ emoji, userId: authUser._id });
+        }
+        return { ...msg, reactions };
+      }
+      return msg;
+    });
+
+    set({ messages: updatedMessages });
+
+    try {
+      await axiosInstance.post(`/messages/react/${messageId}`, { emoji });
+    } catch {
+      toast.error("Failed to react to message");
+      // Rollback if needed (simplified here)
     }
   },
 
@@ -112,6 +153,15 @@ export const useChatStore = create((set, get) => ({
 
     socket.off("newMessage");
     socket.off("typing");
+    socket.off("messageReactionUpdate");
+
+    socket.on("messageReactionUpdate", ({ messageId, reactions }) => {
+      set((state) => ({
+        messages: state.messages.map((msg) =>
+          msg._id === messageId ? { ...msg, reactions } : msg,
+        ),
+      }));
+    });
 
     socket.on("typing", ({ senderId }) => {
       const currentSelectedUser = get().selectedUser;
@@ -157,6 +207,7 @@ export const useChatStore = create((set, get) => ({
     if (socket) {
       socket.off("newMessage");
       socket.off("typing");
+      socket.off("messageReactionUpdate");
     }
   },
 }));
