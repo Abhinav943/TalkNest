@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import useKeyboardSound from "../hooks/useKeyboardSound";
 import { useChatStore } from "../store/useChatStore";
 import toast from "react-hot-toast";
-import { ImageIcon, SendIcon, XIcon } from "lucide-react";
+import { ImageIcon, SendIcon, XIcon, Quote } from "lucide-react";
 
 function MessageInput() {
   const { playRandomKeyStrokeSound } = useKeyboardSound();
@@ -11,7 +11,7 @@ function MessageInput() {
 
   const fileInputRef = useRef(null);
 
-  const { sendMessage, isSoundEnabled, sendTypingEvent } = useChatStore();
+  const { sendMessage, isSoundEnabled, sendTypingEvent, replyingTo, setReplyingTo } = useChatStore();
   const typingTimeoutRef = useRef(null);
 
   const handleInputChange = (e) => {
@@ -77,6 +77,38 @@ function MessageInput() {
             >
               <XIcon className="w-4 h-4" />
             </button>
+          </div>
+        </div>
+      )}
+      
+      {replyingTo && (
+        <div className="max-w-3xl mx-auto mb-3 animate-in slide-in-from-bottom-2 duration-200">
+          <div className="glass-panel rounded-2xl p-3 border-l-4 border-primary relative overflow-hidden group">
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <Quote className="w-3 h-3 text-primary" />
+                  <span className="text-xs font-semibold text-primary uppercase tracking-wider">
+                    Replying to {replyingTo.senderId?.fullName || "User"}
+                  </span>
+                </div>
+                <p className="text-sm text-slate-300 truncate opacity-90 italic">
+                  {replyingTo.text || (replyingTo.image ? "Shared an image" : "Message deleted")}
+                </p>
+              </div>
+              
+              {replyingTo.image && (
+                <img src={replyingTo.image} alt="Reply preview" className="w-12 h-12 rounded-lg object-cover border border-white/10" />
+              )}
+
+              <button
+                onClick={() => setReplyingTo(null)}
+                className="p-1.5 rounded-full hover:bg-white/10 text-slate-400 transition-colors"
+              >
+                <XIcon className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-3xl rounded-full -mr-12 -mt-12 pointer-events-none" />
           </div>
         </div>
       )}

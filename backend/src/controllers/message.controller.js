@@ -26,6 +26,12 @@ export const getMessagesByUserId = async (req, res) => {
         { senderId: myId, receiverId: userChatToID },
         { senderId: userChatToID, receiverId: myId },
       ],
+    }).populate({
+      path: "replyTo",
+      populate: {
+        path: "senderId",
+        select: "fullName",
+      },
     });
 
     res.status(200).json(messages);
@@ -37,7 +43,7 @@ export const getMessagesByUserId = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
   try {
-    const { text, image } = req.body;
+    const { text, image, replyTo } = req.body;
     const senderId = req.user._id;
     const { id: receiverId } = req.params;
 
@@ -69,9 +75,16 @@ export const sendMessage = async (req, res) => {
       receiverId,
       text,
       image: imageUrl,
+      replyTo,
     });
 
-    const savedMessage = await newMessage.save();
+    const savedMessage = await (await newMessage.save()).populate({
+      path: "replyTo",
+      populate: {
+        path: "senderId",
+        select: "fullName",
+      },
+    });
 
     const receiverSocketId = getReceiverSocketId(receiverId);
     if (receiverSocketId) {
@@ -109,6 +122,54 @@ export const getChatPartners = async (req, res) => {
     res.status(200).json(chatPartners);
   } catch (error) {
     console.error("Error fetching chat partners:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const reactToMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const { emoji } = req.body;
+    const userId = req.user._id;
+
+    const message = await Message.findById(messageId);
+    if (!message) {
+      return res.status(404).json({ message: "Message not found" });
+    }
+
+    const existingReactionIndex = message.reactions.findIndex(
+      (r) => r.emoji === emoji && r.userId.toString() === userId.toString(),
+    );
+
+    if (existingReactionIndex > -1) {
+      // Remove reaction if it exists
+      message.reactions.splice(existingReactionIndex, 1);
+    } else {
+      // Add reaction if it doesn't exist
+      message.reactions.push({ emoji, userId });
+    }
+
+    await message.save();
+
+    // Notify both users in the conversation
+    const receiverSocketId = getReceiverSocketId(message.receiverId);
+    const senderSocketId = getReceiverSocketId(message.senderId);
+
+    const updatePayload = {
+      messageId: message._id,
+      reactions: message.reactions,
+    };
+
+    if (receiverSocketId) {
+      io.to(receiverSocketId).emit("messageReactionUpdate", updatePayload);
+    }
+    if (senderSocketId) {
+      io.to(senderSocketId).emit("messageReactionUpdate", updatePayload);
+    }
+
+    res.status(200).json(message.reactions);
+  } catch (error) {
+    console.error("Error reacting to message:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
